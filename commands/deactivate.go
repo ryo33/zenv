@@ -2,6 +2,8 @@ package commands
 
 import (
 	"github.com/codegangsta/cli"
+	"github.com/ryo33/zenv/environment"
+	"github.com/ryo33/zenv/util"
 )
 
 var deactivate = cli.Command{
@@ -13,4 +15,10 @@ var deactivate = cli.Command{
 }
 
 func doDeactivate(c *cli.Context) {
+	args := c.Args()
+	if len(args) == 1 {
+		environment.GetGlobalEnv(args[0]).Deactivate()
+	} else {
+		util.PrintErrorMessage("needs 1 arg")
+	}
 }

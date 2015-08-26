@@ -95,8 +95,7 @@ func ExistsGlobalEnv(name string) bool {
 
 //Exists local environment
 func ExistsLocalEnv(name string) bool {
-	p := path.Join(name, ZENV)
-	if util.Exists(p) {
+	if util.Exists(getLocalPath(name)) {
 		return true
 	}
 	return false

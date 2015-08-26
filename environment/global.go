@@ -29,7 +29,7 @@ func getEnvs(dir string) []*Env {
 	sort.Sort(ByLength(dirs))
 	envs := []*Env{}
 	for i := len(dirs) - 1; i >= 0; i-- {
-		var env = getLocalEnv(dirs[i])
+		var env = GetLocalEnv(dirs[i])
 		if env != nil {
 			if dirs[i] == dir {
 				envs = append(envs, env)
@@ -61,7 +61,34 @@ func (b ByLength) Less(i, j int) bool {
 	return len(b[i]) < len(b[j])
 }
 
+func GetEnvsPath() string {
+	return path.Join(util.GetHomeDir(), ZENV, ENVS, ENVS)
+}
+
+func GetGlovalEnvs() []string {
+	envFile := GetEnvsPath()
+	return util.ReadFile(envFile)
+}
+
 func (env *Env) addGlobalEnv() {
-	//envFile := path.Join(env.dir, ENVS)
-	//TODO
+	envFile := GetEnvsPath()
+	tmp := util.ReadFile(envFile)
+	for _, en := range tmp {
+		if en == env.name {
+			util.PrintErrorMessage("") //TODO already exists  --force to overwrite
+		}
+	}
+	util.WriteFile(envFile, append(tmp, env.name))
+}
+
+func RemoveGlobalEnv(name string) {
+	envFile := GetEnvsPath()
+	tmp := util.ReadFile(envFile)
+	result := []string{}
+	for _, en := range tmp {
+		if en != name {
+			result = append(result, en)
+		}
+	}
+	util.WriteFile(envFile, result)
 }

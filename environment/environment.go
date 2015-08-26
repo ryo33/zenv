@@ -20,14 +20,14 @@ const (
 	SEPARATOR = "="
 )
 
-func getGlobalEnv(name string) *Env {
+func GetGlobalEnv(name string) *Env {
 	if !ExistsGlobalEnv(name) {
 		//TODO error
 	}
 	return read(getGlobalPath(name))
 }
 
-func getLocalEnv(dir string) *Env {
+func GetLocalEnv(dir string) *Env {
 	return read(getLocalPath(dir))
 }
 
@@ -71,24 +71,20 @@ func NewEnv(global bool, name string, recursive, exclusive bool) *Env {
 }
 
 func GetCurrentEnv() *Env {
-	return read(path.Join(util.GetCurrentPath(), ZENV))
-}
-
-func Remove(name string) {
-	//TODO remove global environment
+	return read(getLocalPath(util.GetCurrentPath()))
 }
 
 func Activate(dir string) {
 	envs := getEnvs(dir)
 	for _, env := range envs {
-		env.activate()
+		env.Activate()
 	}
 }
 
 func Deactivate(dir string) {
 	envs := getEnvs(dir)
 	for _, env := range envs {
-		env.deactivate()
+		env.Deactivate()
 	}
 }
 
@@ -101,7 +97,7 @@ func getGlobalPath(name string) string {
 }
 
 func getLocalPath(name string) string {
-	return path.Join(name, ZENV)
+	return path.Join(name, ZENV_LOCAL)
 }
 
 func (env *Env) activate() {

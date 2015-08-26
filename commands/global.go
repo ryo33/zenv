@@ -22,15 +22,19 @@ var global = cli.Command{
 
 func doGlobal(c *cli.Context) {
 	args := c.Args()
-	if c.Bool("remove") {
-		if len(args) != 1 {
-			util.PrintErrorMessage("needs only one arg")
+	if len(args) == 0 {
+		for _, arg := range environment.GetGlovalEnvs() {
+			util.Print(arg)
 		}
-		environment.Remove(args[0])
+	} else if c.Bool("remove") {
+		for _, arg := range args {
+			environment.RemoveGlobalEnv(arg)
+		}
 	} else {
-		//create new global environment
-		name := args[0]
-		env := environment.NewEnv(true, name, c.Bool("recursive"), c.Bool("exclusive"))
-		env.Write()
+		for _, arg := range args {
+			//create new global environment
+			env := environment.NewEnv(true, arg, c.Bool("recursive"), c.Bool("exclusive"))
+			env.Write()
+		}
 	}
 }
