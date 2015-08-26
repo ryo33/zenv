@@ -11,6 +11,13 @@ func getEnvDirs() []string {
 	return util.ReadFile(path.Join(util.GetHomeDir(), ZENV, DIRS))
 }
 
+func (env *Env) addEnvDir() {
+	dirs := getEnvDirs()
+	if !util.Contains(dirs, env.name) {
+		util.WriteFile(path.Join(util.GetHomeDir(), ZENV, DIRS), append(dirs, env.name))
+	}
+}
+
 func getEnvs(dir string) []*Env {
 	tmp := getEnvDirs()
 	dirs := []string{}

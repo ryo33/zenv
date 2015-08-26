@@ -83,12 +83,21 @@ func readEnvs() []string {
 }
 
 //Exists global environment
-func ExistsEnv(name string) bool {
+func ExistsGlobalEnv(name string) bool {
 	envs := readEnvs()
 	for _, env := range envs {
 		if env == name {
 			return true
 		}
+	}
+	return false
+}
+
+//Exists local environment
+func ExistsLocalEnv(name string) bool {
+	p := path.Join(name, ZENV)
+	if util.Exists(p) {
+		return true
 	}
 	return false
 }

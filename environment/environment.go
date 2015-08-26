@@ -16,7 +16,8 @@ type Env struct {
 }
 
 func getGlobalEnv(name string) *Env {
-	if !ExistsEnv(name) {
+	if !ExistsGlobalEnv(name) {
+		//TODO error
 	}
 	return readEnv(getGlobalPath(name))
 }
@@ -32,6 +33,7 @@ func NewEnv(global bool, name string, recursive, exclusive bool) *Env {
 	} else {
 		dir = getLocalPath(name)
 	}
+	util.PrepareDir(dir)
 	env := &Env{
 		global:    global,
 		name:      name,
@@ -73,11 +75,13 @@ func getLocalPath(name string) string {
 }
 
 func (env *Env) Write() {
+	util.PrepareDir(path.Join(util.GetHomeDir(), ZENV))
 	if env.global {
 		env.writeEnv()
 		env.addGlobalEnv()
 	} else {
 		env.writeEnv()
+		env.addEnvDir()
 	}
 }
 
@@ -88,7 +92,7 @@ func (env *Env) activate() {
 		os.Setenv("PATH", env.GetLinksPath()+":"+os.Getenv("PATH"))
 	}
 	//Add to list
-	os.Setenv(ZENV_ACTIVATED, os.Getenv(ZENV_ACTIVATED)+SEPARATOR+env.GetLinksPath())
+	os.Setenv(ZENV_ACTIVATED, os.Getenv(ZENV_ACTIVATED)+VAR_SEPARATOR+env.GetLinksPath())
 
 	if !activated {
 		//TODO activate child envs
@@ -104,7 +108,7 @@ func (env *Env) deactivate() {
 			break
 		}
 	}
-	os.Setenv(ZENV_ACTIVATED, strings.Join(activated, SEPARATOR))
+	os.Setenv(ZENV_ACTIVATED, strings.Join(activated, VAR_SEPARATOR))
 
 	newPath := []string{}
 	if !IsActivated(env.name) {

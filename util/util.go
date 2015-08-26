@@ -45,7 +45,7 @@ func Exists(path string) bool {
 
 func PrepareDir(dir string) {
 	if !Exists(dir) {
-		err := os.Mkdir(dir, 0777)
+		err := os.MkdirAll(dir, 0777)
 		if err != nil {
 			fmt.Println(err.Error())
 		}

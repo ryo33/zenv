@@ -8,11 +8,11 @@ import (
 const (
 	BASE           = "ZENV_"
 	ZENV_ACTIVATED = "ZENV_ACTIVATED"
-	SEPARATOR      = ":"
+	VAR_SEPARATOR  = ":"
 )
 
 func GetActivated() []string {
-	return strings.Split(os.Getenv(ZENV_ACTIVATED), SEPARATOR)
+	return strings.Split(os.Getenv(ZENV_ACTIVATED), VAR_SEPARATOR)
 }
 
 func GetPath() []string {
