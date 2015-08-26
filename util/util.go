@@ -2,14 +2,25 @@ package util
 
 import (
 	"fmt"
-	"github.com/codegangsta/cli"
 	"github.com/mitchellh/go-homedir"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
-func Print(c *cli.Context, str string) {
-	if !c.Bool("quiet") {
+var (
+	Debug = false
+	Quiet = false
+)
+
+func Print(str string) {
+	if !Quiet {
+		fmt.Printf(str + "\n")
+	}
+}
+
+func PrintDebug(str string) {
+	if Debug {
 		fmt.Printf(str + "\n")
 	}
 }
@@ -32,12 +43,6 @@ func PrintErrors(errs ...error) {
 	}
 }
 
-func PrintDebug(c *cli.Context, str string) {
-	if c.Bool("debug") {
-		fmt.Printf(str + "\n")
-	}
-}
-
 func Exists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
@@ -50,6 +55,10 @@ func PrepareDir(dir string) {
 			fmt.Println(err.Error())
 		}
 	}
+}
+
+func ExecCommand(command ...string) {
+	exec.Command(command[0], command[1:]...).Run()
 }
 
 func GetCurrentPath() string {

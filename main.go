@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ryo33/zenv/commands"
+	"github.com/ryo33/zenv/util"
 	"os"
 )
 
@@ -11,6 +12,7 @@ func main() {
 	app.Name = "zenv"
 	app.Usage = "powerful environments management"
 	app.Commands = commands.Commands
+	app.Before = setup
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "quiet, q",
@@ -24,4 +26,14 @@ func main() {
 	app.Action = func(c *cli.Context) {
 	}
 	app.Run(os.Args)
+}
+
+func setup(c *cli.Context) error {
+	if c.Bool("quiet") {
+		util.Quiet = true
+	}
+	if c.Bool("debug") {
+		util.Debug = true
+	}
+	return nil
 }

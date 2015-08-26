@@ -16,13 +16,13 @@ const (
 	INFO       = "info"   // File
 )
 
-//Read env
-func readEnv(pa string) *Env {
+//Read info
+func readInfo(pa string) *Env {
 	data := util.ReadFile(path.Join(pa, INFO))
 	var name, dir string
 	var global, recursive, exclusive bool
 	for _, d := range data {
-		re := strings.Split(d, "=")
+		re := strings.Split(d, SEPARATOR)
 		if len(re) == 2 {
 			switch re[0] {
 			case "name":
@@ -55,23 +55,23 @@ func readEnv(pa string) *Env {
 	return env
 }
 
-//writeEnv
-func (env *Env) writeEnv() {
-	info := append([]string{}, "name="+env.name, "dir="+env.dir)
+//write info
+func (env *Env) writeInfo() {
+	info := append([]string{}, "name"+SEPARATOR+env.name, "dir"+SEPARATOR+env.dir)
 	if env.global {
-		info = append(info, "global=true")
+		info = append(info, "global"+SEPARATOR+"true")
 	} else {
-		info = append(info, "global=false")
+		info = append(info, "global"+SEPARATOR+"false")
 	}
 	if env.recursive {
-		info = append(info, "recursive=true")
+		info = append(info, "recursive"+SEPARATOR+"true")
 	} else {
-		info = append(info, "recursive=false")
+		info = append(info, "recursive"+SEPARATOR+"false")
 	}
 	if env.exclusive {
-		info = append(info, "exclusive=true")
+		info = append(info, "exclusive"+SEPARATOR+"true")
 	} else {
-		info = append(info, "exclusive=false")
+		info = append(info, "exclusive"+SEPARATOR+"false")
 	}
 	util.WriteFile(path.Join(env.dir, INFO), info)
 	//TODO write others

@@ -13,17 +13,42 @@ type Env struct {
 	global    bool
 	recursive bool
 	exclusive bool
+	links     []*Link
 }
+
+const (
+	SEPARATOR = "="
+)
 
 func getGlobalEnv(name string) *Env {
 	if !ExistsGlobalEnv(name) {
 		//TODO error
 	}
-	return readEnv(getGlobalPath(name))
+	return read(getGlobalPath(name))
 }
 
 func getLocalEnv(dir string) *Env {
-	return readEnv(getLocalPath(dir))
+	return read(getLocalPath(dir))
+}
+
+func read(name string) *Env {
+	env := readInfo(name)
+	env.readLinks()
+	return env
+}
+
+func (env *Env) Write() {
+	pa := path.Join(util.GetHomeDir(), ZENV)
+	util.PrepareDir(pa)
+	util.RemoveDir(env.dir)
+	util.PrepareDir(env.dir)
+	env.writeInfo()
+	env.writeLinks()
+	if env.global {
+		env.addGlobalEnv()
+	} else {
+		env.addEnvDir()
+	}
 }
 
 func NewEnv(global bool, name string, recursive, exclusive bool) *Env {
@@ -40,8 +65,13 @@ func NewEnv(global bool, name string, recursive, exclusive bool) *Env {
 		dir:       dir,
 		recursive: recursive,
 		exclusive: exclusive,
+		links:     []*Link{},
 	}
 	return env
+}
+
+func GetCurrentEnv() *Env {
+	return read(path.Join(util.GetCurrentPath(), ZENV))
 }
 
 func Remove(name string) {
@@ -72,17 +102,6 @@ func getGlobalPath(name string) string {
 
 func getLocalPath(name string) string {
 	return path.Join(name, ZENV)
-}
-
-func (env *Env) Write() {
-	util.PrepareDir(path.Join(util.GetHomeDir(), ZENV))
-	if env.global {
-		env.writeEnv()
-		env.addGlobalEnv()
-	} else {
-		env.writeEnv()
-		env.addEnvDir()
-	}
 }
 
 func (env *Env) activate() {

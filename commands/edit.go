@@ -33,7 +33,7 @@ func doEdit(c *cli.Context) {
 	if len(args) == 1 {
 		//TODO util.Setenv("EDITING", `pwd`)
 		//TODO cd to dir
-		util.Print(c, "") //TODO zenv edit --finish
+		util.Print("") //TODO zenv edit --finish
 	} else if len(args) == 0 {
 		//TODO list environments
 	}

@@ -14,11 +14,15 @@ func ReadFile(name string) []string {
 	} else if !os.IsNotExist(err) {
 		PrintErrors(err)
 	}
-	return strings.Split(str, "\n")
+	return Remove(strings.Split(str, "\n"), "")
 }
 
 func WriteFile(name string, data []string) {
 	data = Remove(data, "")
 	err := ioutil.WriteFile(name, []byte(strings.Join(data, "\n")), 0777)
 	PrintErrors(err)
+}
+
+func RemoveDir(name string) {
+	PrintErrors(os.RemoveAll(name))
 }
