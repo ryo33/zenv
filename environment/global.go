@@ -22,7 +22,7 @@ func getEnvs(dir string) []*Env {
 	tmp := getEnvDirs()
 	dirs := []string{}
 	for _, tmpDir := range tmp {
-		if strings.HasPrefix(tmpDir, dir) {
+		if strings.HasPrefix(dir, tmpDir) {
 			dirs = append(dirs, tmpDir)
 		}
 	}
@@ -33,12 +33,11 @@ func getEnvs(dir string) []*Env {
 		if env != nil {
 			if dirs[i] == dir {
 				envs = append(envs, env)
+			} else if env.recursive {
+				envs = append(envs, env)
 			}
 			if env.exclusive {
 				break
-			}
-			if env.recursive {
-				envs = append(envs, env)
 			}
 		}
 	}

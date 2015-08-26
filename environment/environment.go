@@ -2,7 +2,6 @@ package environment
 
 import (
 	"github.com/ryo33/zenv/util"
-	"os"
 	"path"
 	"strings"
 )
@@ -100,21 +99,24 @@ func getLocalPath(name string) string {
 	return path.Join(name, ZENV_LOCAL)
 }
 
-func (env *Env) activate() {
-	activated := IsActivated(env.name)
-	if !activated {
+func (env *Env) Activate() {
+	util.PrintDebug("[activate] " + env.name)
+	isActivated := IsActivated(env.name)
+	if !isActivated {
 		//Add to path
-		os.Setenv("PATH", env.GetLinksPath()+":"+os.Getenv("PATH"))
+		path := GetPath()
+		path = append([]string{env.GetLinksPath()}, path...)
+		util.Setenv("PATH", strings.Join(path, ":"))
 	}
 	//Add to list
-	os.Setenv(ZENV_ACTIVATED, os.Getenv(ZENV_ACTIVATED)+VAR_SEPARATOR+env.GetLinksPath())
-
-	if !activated {
+	util.Setenv(ZENV_ACTIVATED, strings.Join(append(GetActivated(), env.GetLinksPath()), VAR_SEPARATOR))
+	if !isActivated {
 		//TODO activate child envs
 	}
 }
 
-func (env *Env) deactivate() {
+func (env *Env) Deactivate() {
+	util.PrintDebug("[deactivate] " + env.name)
 	//Remove from list
 	activated := GetActivated()
 	for i, actName := range activated {
@@ -123,7 +125,7 @@ func (env *Env) deactivate() {
 			break
 		}
 	}
-	os.Setenv(ZENV_ACTIVATED, strings.Join(activated, VAR_SEPARATOR))
+	util.Setenv(ZENV_ACTIVATED, strings.Join(activated, VAR_SEPARATOR))
 
 	newPath := []string{}
 	if !IsActivated(env.name) {
@@ -134,7 +136,7 @@ func (env *Env) deactivate() {
 			}
 		}
 	}
-	os.Setenv("PATH", strings.Join(newPath, ":"))
+	util.Setenv("PATH", strings.Join(newPath, ":"))
 
 	if !IsActivated(env.name) {
 		//TODO deactivate child envs

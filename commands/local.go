@@ -14,6 +14,14 @@ var local = cli.Command{
 	`,
 	Flags: []cli.Flag{
 		cli.BoolFlag{
+			Name:  "not-recursive, r",
+			Usage: "recursive environment",
+		},
+		cli.BoolFlag{
+			Name:  "exclusive, e",
+			Usage: "exclusive environment",
+		},
+		cli.BoolFlag{
 			Name:  "force, f",
 			Usage: "force to initialize",
 		},
@@ -26,7 +34,7 @@ func doLocal(c *cli.Context) {
 	if environment.ExistsLocalEnv(pwd) && !c.Bool("force") {
 		util.PrintErrorMessage(fmt.Sprintf("%s already exists\n--force flag to force to initialize", environment.ZENV_LOCAL))
 	} else {
-		env := environment.NewEnv(false, pwd, c.Bool("recursive"), c.Bool("exclusive"))
+		env := environment.NewEnv(false, pwd, !c.Bool("not-recursive"), c.Bool("exclusive"))
 		env.Write()
 	}
 }

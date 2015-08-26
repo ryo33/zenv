@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"github.com/ryo33/zenv/util"
 	"os"
 	"strings"
 )
@@ -12,11 +13,11 @@ const (
 )
 
 func GetActivated() []string {
-	return strings.Split(os.Getenv(ZENV_ACTIVATED), VAR_SEPARATOR)
+	return util.Remove(strings.Split(os.Getenv(ZENV_ACTIVATED), VAR_SEPARATOR), "")
 }
 
 func GetPath() []string {
-	return strings.Split(os.Getenv("PATH"), ":")
+	return util.Remove(strings.Split(os.Getenv("PATH"), ":"), "")
 }
 
 func IsActivated(name string) bool {

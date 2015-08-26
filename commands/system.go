@@ -29,6 +29,7 @@ var system = cli.Command{
 }
 
 func doSystem(c *cli.Context) {
+	util.Eval = true
 	args := c.Args()
 	if c.Bool("cd-before") {
 		if len(args) == 1 {

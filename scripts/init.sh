@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-zenv system --init `pwd`
+`zenv system --cd-after $(pwd)`
 function zenv_cd(){
-    local before = `pwd`
-    cd $1
-    local after = `pwd`
-    zenv system --cd $before $after
+    local before=`pwd`
+    builtin cd "$@"
+    local after=`pwd`
+    `zenv system --cd "$before" "$after"`
 }
-alias cd='zenv_cd'
+alias cd="zenv_cd"

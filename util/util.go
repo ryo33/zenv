@@ -11,7 +11,16 @@ import (
 var (
 	Debug = false
 	Quiet = false
+	Eval  = false // zenv output will be evaluated
 )
+
+func format(str string) string {
+	if Eval {
+		return fmt.Sprintf("echo \"%s\"", str)
+	} else {
+		return str
+	}
+}
 
 func Print(str string) {
 	if !Quiet {
@@ -26,7 +35,7 @@ func PrintDebug(str string) {
 }
 
 func PrintErrorMessage(err string) {
-	fmt.Fprintf(os.Stderr, err+"\n")
+	fmt.Fprintf(os.Stderr, format(err)+"\n")
 	os.Exit(1)
 }
 
@@ -34,7 +43,7 @@ func PrintErrors(errs ...error) {
 	exit := false
 	for _, err := range errs {
 		if err != nil {
-			fmt.Fprintf(os.Stderr, err.Error()+"\n")
+			fmt.Fprintf(os.Stderr, format(err.Error())+"\n")
 			exit = true
 		}
 	}
@@ -71,4 +80,8 @@ func GetHomeDir() string {
 	dir, err := homedir.Dir()
 	PrintErrors(err)
 	return dir
+}
+
+func Setenv(key, value string) {
+	Print(fmt.Sprintf("export %s=%s", key, value))
 }
