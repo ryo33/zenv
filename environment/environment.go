@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"github.com/ryo33/zenv/settings"
 	"github.com/ryo33/zenv/util"
 	"path"
 	"strings"
@@ -12,7 +13,7 @@ type Env struct {
 	global    bool
 	recursive bool
 	exclusive bool
-	links     []*Link
+	items     settings.Items
 }
 
 const (
@@ -32,17 +33,18 @@ func GetLocalEnv(dir string) *Env {
 
 func read(name string) *Env {
 	env := readInfo(name)
-	env.readLinks()
 	return env
 }
 
+func (env *Env) ReadSettings() {
+	env.items = settings.Read(env.dir)
+}
+
 func (env *Env) Write() {
-	pa := path.Join(util.GetHomeDir(), ZENV)
-	util.PrepareDir(pa)
 	util.RemoveDir(env.dir)
 	util.PrepareDir(env.dir)
 	env.writeInfo()
-	env.writeLinks()
+	env.items.Write(env.dir)
 	if env.global {
 		env.addGlobalEnv()
 	} else {
@@ -64,7 +66,7 @@ func NewEnv(global bool, name string, recursive, exclusive bool) *Env {
 		dir:       dir,
 		recursive: recursive,
 		exclusive: exclusive,
-		links:     []*Link{},
+		items:     make(settings.Items),
 	}
 	return env
 }
@@ -103,13 +105,10 @@ func (env *Env) Activate() {
 	util.PrintDebug("[activate] " + env.name)
 	isActivated := IsActivated(env.name)
 	if !isActivated {
-		//Add to path
-		path := GetPath()
-		path = append([]string{env.GetLinksPath()}, path...)
-		util.Setenv("PATH", strings.Join(path, ":"))
+		env.items.Activate()
 	}
 	//Add to list
-	util.Setenv(ZENV_ACTIVATED, strings.Join(append(GetActivated(), env.GetLinksPath()), VAR_SEPARATOR))
+	util.Setenv(ZENV_ACTIVATED, strings.Join(append(GetActivated(), env.name), VAR_SEPARATOR))
 	if !isActivated {
 		//TODO activate child envs
 	}
@@ -129,16 +128,40 @@ func (env *Env) Deactivate() {
 
 	newPath := []string{}
 	if !IsActivated(env.name) {
-		//Remove from path
-		for _, p := range GetPath() {
-			if p != env.GetLinksPath() {
-				newPath = append(newPath, p)
-			}
-		}
+		env.items.Deactivate()
 	}
 	util.Setenv("PATH", strings.Join(newPath, ":"))
 
 	if !IsActivated(env.name) {
 		//TODO deactivate child envs
+	}
+}
+
+func (env *Env) GetItems(lable string) [][]string {
+	its, ok := env.items.ToMap()[lable]
+	if ok {
+		return its
+	} else {
+		return [][]string{}
+	}
+}
+
+func (env *Env) AddItems(lable string, nits ...[]string) {
+	env.items.ToMap()[lable] = append(env.GetItems(lable), nits...)
+	//tmp := env.items.ToMap()
+	//tmp[lable] = append(tmp[lable], nits...)
+	//env.items = settings.Items(tmp)
+}
+
+func (env *Env) RemoveItems(lable string, remove func([]string, []string) bool, param []string) {
+	its := env.GetItems(lable)
+	if len(its) > 0 {
+		result := [][]string{}
+		for _, it := range its {
+			if !remove(it, param) {
+				result = append(result, it)
+			}
+		}
+		env.items.ToMap()[lable] = result
 	}
 }

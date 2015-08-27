@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+export PATH=~/.zenv/vbin:$PATH
+
 `zenv system --cd-after $(pwd)`
 function zenv_cd(){
     local before=`pwd`

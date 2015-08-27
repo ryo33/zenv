@@ -28,18 +28,26 @@ func doLink(c *cli.Context) {
 	args := c.Args()
 	if c.Bool("remove") {
 		env := environment.GetCurrentEnv()
-		env.RemoveLinks(args)
+		env.RemoveItems("link", removeLink, args)
 		env.Write()
 	} else if len(args) == 0 {
 		env := environment.GetCurrentEnv()
-		for _, link := range env.Links() {
-			util.Print(link.Name() + " " + link.Source())
+		env.ReadSettings()
+		for _, link := range env.GetItems("link") {
+			util.Print(link[0] + " " + link[1])
 		}
 	} else if len(args) != 2 {
 		util.PrintErrorMessage("needs 2 args")
 	} else {
 		env := environment.GetCurrentEnv()
-		env.AddLink(environment.NewLink(args[0], args[1]), c.Bool("force"))
+		env.AddItems("link", []string{args[0], args[1]})
 		env.Write()
 	}
+}
+
+func removeLink(it []string, param []string) bool {
+	if it[0] == param[0] {
+		return true
+	}
+	return false
 }
