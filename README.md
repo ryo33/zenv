@@ -21,7 +21,7 @@ Changing the version of python `2.7.10` to `3.4.3` in `~/tmp/example` directory.
 First, install [Go](https://golang.org/doc/install).  
 And, run the following commands.(replace `.bashrc` if needed.)  
     $ go get -u github.com/ryo33/zenv  
-    $ go install -u github.com/ryo33/zenv  
+    $ go install github.com/ryo33/zenv  
     $ echo source \$GOPATH/src/github.com/ryo33/zenv/scripts/init.sh >> ~/.bashrc  
 Finally, restart your shell.
 
@@ -42,8 +42,8 @@ Initialize local environment.
 Options:  
 `--not-recursive`: not to activate this environment in child directories.  
 `--exclusive`: not to activate environments of parent directories.  
-[WIP]`--merge NAME` or `-m NAME`: see [merge](###[WIP]merge)  
-[WIP]`--load NAME` or `-l NAME`: see [load](###[WIP]load)  
+[WIP]`--merge NAME` or `-m NAME`: see `merge`  
+[WIP]`--load NAME` or `-l NAME`: see `load`  
 ###global
 Initialize global environment.  
 `$ zenv global NAME`  
