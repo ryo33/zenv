@@ -36,6 +36,8 @@ Finally, restart your shell.
 ##Commands
 When you want to edit global environments.  
 `$ zenv --global NAME COMMAND ARGUMENT...`  
+or  
+`$ zenv -g NAME COMMAND ARGUMENT...`  
 ###local
 Initialize local environment.  
 `$ zenv local`  
