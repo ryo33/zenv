@@ -39,7 +39,8 @@ func doLink(c *cli.Context) {
 		util.PrintErrorMessage("needs 2 args")
 	} else {
 		env := GetEnv()
-		env.AddItems("link", []string{args[0], args[1]})
+		env.ReadSettings()
+		env.AddItems("link", c.Bool("force"), []string{args[0], args[1]})
 		env.Write()
 	}
 }

@@ -143,8 +143,8 @@ func (env *Env) GetItems(lable string) [][]string {
 	}
 }
 
-func (env *Env) AddItems(lable string, nits ...[]string) {
-	env.items.ToMap()[lable] = append(env.GetItems(lable), nits...)
+func (env *Env) AddItems(lable string, force bool, nits ...[]string) {
+	env.items.AddItems(lable, force, nits)
 }
 
 func (env *Env) RemoveItems(lable string, remove func([]string, []string) bool, param []string) {

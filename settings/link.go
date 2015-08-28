@@ -17,6 +17,7 @@ var link = Setting{
 	activate:   activateLink,
 	deactivate: deactivateLink,
 	initialize: initializeLink,
+	equal:      equalLink,
 }
 
 func initializeLink(dir string) {
@@ -62,4 +63,12 @@ func GetVBinPath(dir string) string {
 
 func (info *Info) GetLinkPath(link string) string {
 	return path.Join(info.zenv, VBIN, link)
+}
+
+func equalLink(a []string, b []string) bool {
+	if len(a) >= 1 && len(b) >= 1 && a[0] == b[0] {
+		return true
+	} else {
+		return false
+	}
 }

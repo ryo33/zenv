@@ -12,6 +12,7 @@ type Setting struct {
 	activate   func([]string, *Info) bool
 	deactivate func([]string, *Info) bool
 	initialize func(string)
+	equal      func([]string, []string) bool
 }
 
 type Info struct {
@@ -144,6 +145,32 @@ func (items Items) Deactivate(info *Info) {
 				}
 			}
 		}
+	}
+}
+
+func (items Items) AddItems(lable string, force bool, its2 [][]string) {
+	its, ok := items.ToMap()[lable]
+	se, ok2 := settings[lable]
+	if !ok {
+		its = [][]string{}
+	}
+	if !ok2 {
+		util.PrintErrorMessageContinue(lable + " lable is undefined")
+	} else {
+		for idx, it := range its {
+			tmp := its2
+			for idx2, it2 := range tmp {
+				if se.equal(it, it2) {
+					if !force {
+						util.PrintErrorMessage(strings.Join(it2, " ") + " already exists\n--force to overwrite")
+					} else {
+						items.ToMap()[lable][idx] = it2
+					}
+					its2 = append(its2[:idx2], its2[idx2+1:]...)
+				}
+			}
+		}
+		items.ToMap()[lable] = append(its, its2...)
 	}
 }
 
