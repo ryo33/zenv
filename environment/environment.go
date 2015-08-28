@@ -32,6 +32,7 @@ func GetLocalEnv(dir string) *Env {
 }
 
 func read(name string) *Env {
+	util.PrepareDir(path.Join(util.GetHomeDir(), ZENV, ENVS))
 	env := readInfo(name)
 	return env
 }
