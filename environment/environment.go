@@ -46,9 +46,7 @@ func (env *Env) Write() {
 	util.PrepareDir(env.dir)
 	env.writeInfo()
 	env.items.Write(env.dir)
-	if env.global {
-		env.addGlobalEnv()
-	} else {
+	if !env.global {
 		env.addEnvDir()
 	}
 }

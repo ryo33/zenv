@@ -16,6 +16,10 @@ var global = cli.Command{
 			Name:  "remove",
 			Usage: "",
 		},
+		cli.BoolFlag{
+			Name:  "force, f",
+			Usage: "force to initialize",
+		},
 	},
 	Action: doGlobal,
 }
@@ -35,6 +39,7 @@ func doGlobal(c *cli.Context) {
 			//create new global environment
 			env := environment.NewEnv(true, arg, c.Bool("recursive"), c.Bool("exclusive"))
 			env.Write()
+			env.AddGlobalEnv(c.Bool("force"))
 		}
 	}
 }

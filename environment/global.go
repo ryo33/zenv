@@ -69,12 +69,15 @@ func GetGlovalEnvs() []string {
 	return util.ReadFile(envFile)
 }
 
-func (env *Env) addGlobalEnv() {
+func (env *Env) AddGlobalEnv(force bool) {
 	envFile := GetEnvsPath()
 	tmp := util.ReadFile(envFile)
 	for _, en := range tmp {
 		if en == env.name {
-			util.PrintErrorMessage("") //TODO already exists  --force to overwrite
+			if !force {
+				util.PrintErrorMessage("already exists\n--force to overwrite") //TODO already exists  --force to overwrite
+			}
+			break
 		}
 	}
 	util.WriteFile(envFile, append(tmp, env.name))

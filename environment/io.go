@@ -74,7 +74,6 @@ func (env *Env) writeInfo() {
 		info = append(info, "exclusive"+SEPARATOR+"false")
 	}
 	util.WriteFile(path.Join(env.dir, INFO), info)
-	//TODO write others
 }
 
 //Read all global envs
