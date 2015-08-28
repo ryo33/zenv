@@ -30,24 +30,32 @@ func Print(str string) {
 
 func PrintDebug(str string) {
 	if Debug {
-		fmt.Printf(str + "\n")
+		fmt.Printf(format(str) + "\n")
 	}
+}
+
+func PrintErrorMessageContinue(err string) {
+	fmt.Fprintf(os.Stderr, err+"\n")
 }
 
 func PrintErrorMessage(err string) {
-	fmt.Fprintf(os.Stderr, format(err)+"\n")
+	PrintErrorMessageContinue(err)
 	os.Exit(1)
 }
 
-func PrintErrors(errs ...error) {
+func PrintErrorsContinue(errs ...error) bool {
 	exit := false
 	for _, err := range errs {
 		if err != nil {
-			fmt.Fprintf(os.Stderr, format(err.Error())+"\n")
+			fmt.Fprintf(os.Stderr, err.Error()+"\n")
 			exit = true
 		}
 	}
-	if exit {
+	return exit
+}
+
+func PrintErrors(errs ...error) {
+	if PrintErrorsContinue(errs...) {
 		os.Exit(1)
 	}
 }
@@ -83,5 +91,6 @@ func GetHomeDir() string {
 }
 
 func Setenv(key, value string) {
+	os.Setenv(key, value)
 	Print(fmt.Sprintf("export %s=%s", key, value))
 }

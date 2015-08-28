@@ -77,7 +77,9 @@ func GetCurrentEnv() *Env {
 
 func Activate(dir string) {
 	envs := getEnvs(dir)
+	settings.Initialize(getZenvPath())
 	for _, env := range envs {
+		env.ReadSettings()
 		env.Activate()
 	}
 }
@@ -85,6 +87,7 @@ func Activate(dir string) {
 func Deactivate(dir string) {
 	envs := getEnvs(dir)
 	for _, env := range envs {
+		env.ReadSettings()
 		env.Deactivate()
 	}
 }
@@ -101,21 +104,21 @@ func getLocalPath(name string) string {
 	return path.Join(name, ZENV_LOCAL)
 }
 
+func getZenvPath() string {
+	return path.Join(util.GetHomeDir(), ZENV)
+}
+
 func (env *Env) Activate() {
-	util.PrintDebug("[activate] " + env.name)
 	isActivated := IsActivated(env.name)
 	if !isActivated {
-		env.items.Activate()
+		env.items.Activate(settings.NewInfo(getZenvPath(), env.dir))
+		//TODO activate child envs
 	}
 	//Add to list
 	util.Setenv(ZENV_ACTIVATED, strings.Join(append(GetActivated(), env.name), VAR_SEPARATOR))
-	if !isActivated {
-		//TODO activate child envs
-	}
 }
 
 func (env *Env) Deactivate() {
-	util.PrintDebug("[deactivate] " + env.name)
 	//Remove from list
 	activated := GetActivated()
 	for i, actName := range activated {
@@ -126,13 +129,8 @@ func (env *Env) Deactivate() {
 	}
 	util.Setenv(ZENV_ACTIVATED, strings.Join(activated, VAR_SEPARATOR))
 
-	newPath := []string{}
 	if !IsActivated(env.name) {
-		env.items.Deactivate()
-	}
-	util.Setenv("PATH", strings.Join(newPath, ":"))
-
-	if !IsActivated(env.name) {
+		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO deactivate child envs
 	}
 }
@@ -148,9 +146,6 @@ func (env *Env) GetItems(lable string) [][]string {
 
 func (env *Env) AddItems(lable string, nits ...[]string) {
 	env.items.ToMap()[lable] = append(env.GetItems(lable), nits...)
-	//tmp := env.items.ToMap()
-	//tmp[lable] = append(tmp[lable], nits...)
-	//env.items = settings.Items(tmp)
 }
 
 func (env *Env) RemoveItems(lable string, remove func([]string, []string) bool, param []string) {

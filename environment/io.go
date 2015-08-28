@@ -48,7 +48,7 @@ func readInfo(pa string) *Env {
 		}
 	}
 	if len(name) == 0 || len(dir) == 0 {
-		util.PrintErrorMessage(fmt.Sprintf("Can't read environment info in %s", pa))
+		util.PrintErrorMessageContinue(fmt.Sprintf("Can't read environment info in %s", pa))
 	}
 	env := NewEnv(global, name, recursive, exclusive)
 	//TODO read others

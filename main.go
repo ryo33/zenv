@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ryo33/zenv/commands"
+	"github.com/ryo33/zenv/environment"
 	"github.com/ryo33/zenv/util"
 	"os"
 )
@@ -23,8 +24,7 @@ func main() {
 			Usage: "print debugging information",
 		},
 	}
-	app.Action = func(c *cli.Context) {
-	}
+	app.Action = doZenv
 	app.Run(os.Args)
 }
 
@@ -36,4 +36,10 @@ func setup(c *cli.Context) error {
 		util.Debug = true
 	}
 	return nil
+}
+
+func doZenv(c *cli.Context) {
+	for _, env := range environment.GetActivated() {
+		util.Print(env)
+	}
 }
