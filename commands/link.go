@@ -2,7 +2,6 @@ package commands
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/ryo33/zenv/environment"
 	"github.com/ryo33/zenv/util"
 )
 
@@ -27,11 +26,11 @@ var link = cli.Command{
 func doLink(c *cli.Context) {
 	args := c.Args()
 	if c.Bool("remove") {
-		env := environment.GetCurrentEnv()
+		env := GetEnv()
 		env.RemoveItems("link", removeLink, args)
 		env.Write()
 	} else if len(args) == 0 {
-		env := environment.GetCurrentEnv()
+		env := GetEnv()
 		env.ReadSettings()
 		for _, link := range env.GetItems("link") {
 			util.Print(link[0] + " " + link[1])
@@ -39,7 +38,7 @@ func doLink(c *cli.Context) {
 	} else if len(args) != 2 {
 		util.PrintErrorMessage("needs 2 args")
 	} else {
-		env := environment.GetCurrentEnv()
+		env := GetEnv()
 		env.AddItems("link", []string{args[0], args[1]})
 		env.Write()
 	}

@@ -79,7 +79,7 @@ func (env *Env) writeInfo() {
 
 //Read all global envs
 func readEnvs() []string {
-	return util.ReadFile(path.Join(util.GetHomeDir(), ZENV, ENVS))
+	return util.ReadFile(path.Join(util.GetHomeDir(), ZENV, ENVS, ENVS))
 }
 
 //Exists global environment

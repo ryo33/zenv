@@ -22,7 +22,7 @@ const (
 
 func GetGlobalEnv(name string) *Env {
 	if !ExistsGlobalEnv(name) {
-		//TODO error
+		util.PrintErrorMessage("not exists global env")
 	}
 	return read(getGlobalPath(name))
 }

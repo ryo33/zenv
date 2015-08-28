@@ -15,6 +15,14 @@ func main() {
 	app.Commands = commands.Commands
 	app.Before = setup
 	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "global, g",
+			Usage: "edit global environment",
+		},
+		cli.StringFlag{
+			Name:  "local, l",
+			Usage: "edit local environment",
+		},
 		cli.BoolFlag{
 			Name:  "quiet, q",
 			Usage: "do not print normal output",
@@ -34,6 +42,12 @@ func setup(c *cli.Context) error {
 	}
 	if c.Bool("debug") {
 		util.Debug = true
+	}
+	if g := c.String("global"); len(g) != 0 {
+		commands.Env = environment.GetGlobalEnv(g)
+	}
+	if l := c.String("local"); len(l) != 0 {
+		commands.Env = environment.GetLocalEnv(l)
 	}
 	return nil
 }
