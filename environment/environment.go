@@ -163,6 +163,9 @@ func (env *Env) Deactivate(pid string) {
 		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO deactivate child envs
 	}
+	if len(activated) == 0 {
+		util.RemoveDir(getTemporalDir(pid))
+	}
 }
 
 func (env *Env) GetItems(lable string) [][]string {
