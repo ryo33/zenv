@@ -32,6 +32,8 @@ Finally, restart your shell.
 `$ zenv COMMAND ARGUMENT...`
 3. Activate it!  
 `$ cd YOUR_DIRECTORY`  
+4. Deactivate it!  
+`$ cd ANOTHER_DIRECTORY`  
 
 ##Commands
 When you want to edit global environments.  
