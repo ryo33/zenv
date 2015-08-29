@@ -52,7 +52,10 @@ func readInfo(pa string) *Env {
 		}
 	}
 	if len(name) == 0 || len(dir) == 0 {
-		util.PrintErrorMessageContinue(fmt.Sprintf("Can't read environment info in %s", pa))
+		util.Print(fmt.Sprintf("Can't read environment info in %s", pa))
+		if util.YNPrompt("Remove?", false) {
+			removeEnvDir(name)
+		}
 	}
 	env := NewEnv(global, name, recursive, exclusive)
 	//TODO read others

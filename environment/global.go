@@ -18,6 +18,16 @@ func (env *Env) addEnvDir() {
 	}
 }
 
+func removeEnvDir(name string) {
+	dirs := getEnvDirs()
+	for i, dir := range dirs {
+		if name == dir {
+			util.WriteFile(path.Join(util.GetHomeDir(), ZENV, DIRS), append(dirs[:i], dirs[i+1:]...))
+			return
+		}
+	}
+}
+
 func getEnvs(dir string) []*Env {
 	tmp := getEnvDirs()
 	dirs := []string{}
