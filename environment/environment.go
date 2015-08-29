@@ -181,12 +181,18 @@ func (env *Env) AddItems(lable string, force bool, nits ...[]string) {
 	env.items.AddItems(lable, force, nits)
 }
 
-func (env *Env) RemoveItems(lable string, remove func([]string, []string) bool, param []string) {
+func (env *Env) RemoveItems(lable string, remove func([]string, []string) bool, param [][]string) {
 	its := env.GetItems(lable)
 	if len(its) > 0 {
 		result := [][]string{}
 		for _, it := range its {
-			if !remove(it, param) {
+			rm := false
+			for _, pa := range param {
+				if remove(it, pa) {
+					rm = true
+				}
+			}
+			if !rm {
 				result = append(result, it)
 			}
 		}
