@@ -32,23 +32,23 @@ func doSystem(c *cli.Context) {
 	util.Eval = true
 	args := c.Args()
 	if c.Bool("cd-before") {
-		if len(args) == 1 {
-			environment.Deactivate(args[0])
+		if len(args) == 2 {
+			environment.Deactivate(args[0], args[1])
 		} else {
-			util.PrintErrorMessage("needs 1 arg")
+			util.PrintErrorMessage("needs 2 arg")
 		}
 	} else if c.Bool("cd-after") {
-		if len(args) == 1 {
-			environment.Activate(args[0])
+		if len(args) == 2 {
+			environment.Activate(args[0], args[1])
 		} else {
-			util.PrintErrorMessage("needs 1 arg")
+			util.PrintErrorMessage("needs 2 arg")
 		}
 	} else if c.Bool("cd") {
-		if len(args) == 2 {
-			environment.Deactivate(args[0])
-			environment.Activate(args[1])
+		if len(args) == 3 {
+			environment.Deactivate(args[0], args[1])
+			environment.Activate(args[0], args[2])
 		} else {
-			util.PrintErrorMessage("needs 2 args")
+			util.PrintErrorMessage("needs 3 args")
 		}
 	}
 }

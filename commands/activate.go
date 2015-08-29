@@ -17,9 +17,9 @@ var activate = cli.Command{
 func doActivate(c *cli.Context) {
 	util.Eval = true
 	args := c.Args()
-	if len(args) == 1 {
-		environment.GetGlobalEnv(args[0]).Activate()
+	if len(args) == 2 {
+		environment.GetGlobalEnv(args[1]).Activate(args[0])
 	} else {
-		util.PrintErrorMessage("needs 1 arg")
+		util.PrintErrorMessage("needs 2 arg")
 	}
 }

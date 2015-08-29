@@ -4,7 +4,6 @@ import (
 	"github.com/ryo33/zenv/settings"
 	"github.com/ryo33/zenv/util"
 	"path"
-	"strings"
 )
 
 type Env struct {
@@ -92,21 +91,21 @@ func GetCurrentEnv() *Env {
 	return read(getLocalPath(util.GetCurrentPath()))
 }
 
-func Activate(dir string) {
+func Activate(pid string, dir string) {
 	util.PrepareDir(getZenvPath())
 	envs := getEnvs(dir)
 	settings.Initialize(getZenvPath())
 	for _, env := range envs {
 		env.ReadSettings()
-		env.Activate()
+		env.Activate(pid)
 	}
 }
 
-func Deactivate(dir string) {
+func Deactivate(pid string, dir string) {
 	envs := getEnvs(dir)
 	for _, env := range envs {
 		env.ReadSettings()
-		env.Deactivate()
+		env.Deactivate(pid)
 	}
 }
 
@@ -126,28 +125,41 @@ func getZenvPath() string {
 	return path.Join(util.GetHomeDir(), ZENV)
 }
 
-func (env *Env) Activate() {
-	isActivated := IsActivated(env.name)
-	if !isActivated {
+func GetActivated(pid string) []string {
+	return readTemporal("activated", pid)
+}
+
+func isActivated(activated []string, name string) bool {
+	for _, ac := range activated {
+		if ac == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (env *Env) Activate(pid string) {
+	activated := GetActivated(pid)
+	if !isActivated(activated, env.name) {
 		env.items.Activate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO activate child envs
 	}
 	//Add to list
-	util.Setenv(ZENV_ACTIVATED, strings.Join(append(GetActivated(), env.name), VAR_SEPARATOR))
+	writeTemporal("activated", pid, append(activated, env.name))
 }
 
-func (env *Env) Deactivate() {
+func (env *Env) Deactivate(pid string) {
 	//Remove from list
-	activated := GetActivated()
+	activated := GetActivated(pid)
 	for i, actName := range activated {
 		if actName == env.name {
 			activated = append(activated[:i], activated[i+1:]...)
 			break
 		}
 	}
-	util.Setenv(ZENV_ACTIVATED, strings.Join(activated, VAR_SEPARATOR))
+	writeTemporal("activated", pid, activated)
 
-	if !IsActivated(env.name) {
+	if !isActivated(activated, env.name) {
 		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO deactivate child envs
 	}
