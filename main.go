@@ -53,7 +53,12 @@ func setup(c *cli.Context) error {
 }
 
 func doZenv(c *cli.Context) {
-	for _, env := range environment.GetActivated() {
-		util.Print(env)
+	args := c.Args()
+	if len(args) == 1 {
+		for _, env := range environment.GetActivated(args[0]) {
+			util.Print(env)
+		}
+	} else {
+		util.PrintErrorMessage("needs 1 arg")
 	}
 }
