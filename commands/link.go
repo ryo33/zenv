@@ -37,7 +37,7 @@ func doLink(c *cli.Context) {
 			util.Print(link[0] + " " + link[1])
 		}
 	} else if len(args) != 2 {
-		util.PrintErrorMessage("needs 2 args")
+		printArgumentError(2)
 	} else {
 		env := GetEnv()
 		env.ReadSettings()
