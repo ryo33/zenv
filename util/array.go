@@ -20,3 +20,11 @@ func Remove(strs []string, target string) []string {
 	}
 	return res
 }
+
+func Wrap(strs []string) [][]string {
+	result := [][]string{}
+	for _, str := range strs {
+		result = append(result, []string{str})
+	}
+	return result
+}

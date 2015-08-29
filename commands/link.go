@@ -28,7 +28,7 @@ func doLink(c *cli.Context) {
 	if c.Bool("remove") {
 		env := GetEnv()
 		env.ReadSettings()
-		env.RemoveItems("link", removeLink, args)
+		env.RemoveItems("link", removeLink, util.Wrap(args))
 		env.Write()
 	} else if len(args) == 0 {
 		env := GetEnv()
