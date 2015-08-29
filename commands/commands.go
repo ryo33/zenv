@@ -11,7 +11,6 @@ var Commands = []cli.Command{
 	activate,
 	deactivate,
 	system,
-	edit,
 	link,
 }
 
