@@ -14,7 +14,6 @@ var deactivate = cli.Command{
 }
 
 func doDeactivate(c *cli.Context) {
-	util.Eval = true
 	args := c.Args()
 	if len(args) == 2 {
 		environment.GetGlobalEnv(args[1]).Deactivate(args[0])

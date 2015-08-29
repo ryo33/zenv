@@ -11,16 +11,7 @@ import (
 var (
 	Debug = false
 	Quiet = false
-	Eval  = false // zenv output will be evaluated
 )
-
-func format(str string) string {
-	if Eval {
-		return fmt.Sprintf("echo \"%s\"", str)
-	} else {
-		return str
-	}
-}
 
 func Print(str string) {
 	if !Quiet {
@@ -30,7 +21,7 @@ func Print(str string) {
 
 func PrintDebug(str string) {
 	if Debug {
-		fmt.Printf(format(str) + "\n")
+		fmt.Printf(str + "\n")
 	}
 }
 
