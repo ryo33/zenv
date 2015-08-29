@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"fmt"
 	"github.com/ryo33/zenv/util"
 	"path"
 	"sort"
@@ -39,7 +40,8 @@ func getEnvs(dir string) []*Env {
 	sort.Sort(ByLength(dirs))
 	envs := []*Env{}
 	for i := len(dirs) - 1; i >= 0; i-- {
-		var env = GetLocalEnv(dirs[i])
+		name := dirs[i]
+		var env = getLocalEnv(name)
 		if env != nil {
 			if dirs[i] == dir {
 				envs = append(envs, env)
@@ -48,6 +50,11 @@ func getEnvs(dir string) []*Env {
 			}
 			if env.exclusive {
 				break
+			}
+		} else {
+			util.PrintErrorMessageContinue(fmt.Sprintf("%s not exists", name))
+			if util.YNPrompt("remove?", false) {
+				removeEnvDir(name)
 			}
 		}
 	}

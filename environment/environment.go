@@ -21,13 +21,29 @@ const (
 )
 
 func GetGlobalEnv(name string) *Env {
+	env := getGlobalEnv(name)
+	if env == nil {
+		util.PrintErrorMessage("not exists")
+	}
+	return env
+}
+
+func GetLocalEnv(name string) *Env {
+	env := getLocalEnv(name)
+	if env == nil {
+		util.PrintErrorMessage("not exists")
+	}
+	return env
+}
+
+func getGlobalEnv(name string) *Env {
 	if !ExistsGlobalEnv(name) {
 		util.PrintErrorMessage("not exists global env")
 	}
 	return read(getGlobalPath(name))
 }
 
-func GetLocalEnv(dir string) *Env {
+func getLocalEnv(dir string) *Env {
 	return read(getLocalPath(dir))
 }
 

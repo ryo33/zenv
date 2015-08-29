@@ -1,7 +1,6 @@
 package environment
 
 import (
-	"fmt"
 	"github.com/ryo33/zenv/util"
 	"path"
 	"strings"
@@ -52,10 +51,7 @@ func readInfo(pa string) *Env {
 		}
 	}
 	if len(name) == 0 || len(dir) == 0 {
-		util.Print(fmt.Sprintf("Can't read environment info in %s", pa))
-		if util.YNPrompt("Remove?", false) {
-			removeEnvDir(name)
-		}
+		return nil
 	}
 	env := NewEnv(global, name, recursive, exclusive)
 	//TODO read others
