@@ -44,6 +44,8 @@ func (env *Env) ReadSettings() {
 func (env *Env) Write() {
 	util.RemoveDir(env.dir)
 	util.PrepareDir(env.dir)
+	util.PrepareDir(getZenvPath())
+	util.PrepareDir(getEnvsPath())
 	env.writeInfo()
 	env.items.Write(env.dir)
 	if !env.global {
@@ -75,6 +77,7 @@ func GetCurrentEnv() *Env {
 }
 
 func Activate(dir string) {
+	util.PrepareDir(getZenvPath())
 	envs := getEnvs(dir)
 	settings.Initialize(getZenvPath())
 	for _, env := range envs {

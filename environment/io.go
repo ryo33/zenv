@@ -16,6 +16,10 @@ const (
 	INFO       = "info"   // File
 )
 
+func getEnvsPath() string {
+	return path.Join(util.GetHomeDir(), ZENV, ENVS)
+}
+
 //Read info
 func readInfo(pa string) *Env {
 	data := util.ReadFile(path.Join(pa, INFO))
