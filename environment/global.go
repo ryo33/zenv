@@ -3,19 +3,20 @@ package environment
 import (
 	"fmt"
 	"github.com/ryo33/zenv/util"
+	"github.com/ryo33/zenv/zenv"
 	"path"
 	"sort"
 	"strings"
 )
 
 func getEnvDirs() []string {
-	return util.ReadFile(path.Join(util.GetHomeDir(), ZENV, DIRS))
+	return util.ReadFile(path.Join(util.GetHomeDir(), zenv.ZENV, DIRS))
 }
 
 func (env *Env) addEnvDir() {
 	dirs := getEnvDirs()
 	if !util.Contains(dirs, env.name) {
-		util.WriteFile(path.Join(util.GetHomeDir(), ZENV, DIRS), append(dirs, env.name))
+		util.WriteFile(path.Join(util.GetHomeDir(), zenv.ZENV, DIRS), append(dirs, env.name))
 	}
 }
 
@@ -23,7 +24,7 @@ func removeEnvDir(name string) {
 	dirs := getEnvDirs()
 	for i, dir := range dirs {
 		if name == dir {
-			util.WriteFile(path.Join(util.GetHomeDir(), ZENV, DIRS), append(dirs[:i], dirs[i+1:]...))
+			util.WriteFile(path.Join(util.GetHomeDir(), zenv.ZENV, DIRS), append(dirs[:i], dirs[i+1:]...))
 			return
 		}
 	}
@@ -78,7 +79,7 @@ func (b ByLength) Less(i, j int) bool {
 }
 
 func GetEnvsPath() string {
-	return path.Join(util.GetHomeDir(), ZENV, ENVS, ENVS)
+	return path.Join(util.GetHomeDir(), zenv.ZENV, ENVS, ENVS)
 }
 
 func GetGlovalEnvs() []string {

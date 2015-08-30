@@ -2,12 +2,12 @@ package environment
 
 import (
 	"github.com/ryo33/zenv/util"
+	"github.com/ryo33/zenv/zenv"
 	"path"
 	"strings"
 )
 
 const (
-	ZENV       = ".zenv"  // Dir
 	ZENV_LOCAL = ".zenvl" // Dir
 	DIRS       = "dirs"   // File
 	ENVS       = "envs"   // Both
@@ -16,7 +16,7 @@ const (
 )
 
 func getEnvsPath() string {
-	return path.Join(util.GetHomeDir(), ZENV, ENVS)
+	return path.Join(util.GetHomeDir(), zenv.ZENV, ENVS)
 }
 
 //Read info
@@ -81,7 +81,7 @@ func (env *Env) writeInfo() {
 
 //Read all global envs
 func readEnvs() []string {
-	return util.ReadFile(path.Join(util.GetHomeDir(), ZENV, ENVS, ENVS))
+	return util.ReadFile(path.Join(util.GetHomeDir(), zenv.ZENV, ENVS, ENVS))
 }
 
 //Exists global environment

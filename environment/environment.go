@@ -2,7 +2,9 @@ package environment
 
 import (
 	"github.com/ryo33/zenv/settings"
+	"github.com/ryo33/zenv/storage"
 	"github.com/ryo33/zenv/util"
+	"github.com/ryo33/zenv/zenv"
 	"path"
 )
 
@@ -47,7 +49,7 @@ func getLocalEnv(dir string) *Env {
 }
 
 func read(name string) *Env {
-	util.PrepareDir(path.Join(util.GetHomeDir(), ZENV, ENVS))
+	util.PrepareDir(path.Join(util.GetHomeDir(), zenv.ZENV, ENVS))
 	env := readInfo(name)
 	return env
 }
@@ -114,7 +116,7 @@ func (env *Env) GetPath(sub string) string {
 }
 
 func getGlobalPath(name string) string {
-	return path.Join(util.GetHomeDir(), ZENV, ENVS, name)
+	return path.Join(util.GetHomeDir(), zenv.ZENV, ENVS, name)
 }
 
 func getLocalPath(name string) string {
@@ -122,11 +124,11 @@ func getLocalPath(name string) string {
 }
 
 func getZenvPath() string {
-	return path.Join(util.GetHomeDir(), ZENV)
+	return path.Join(util.GetHomeDir(), zenv.ZENV)
 }
 
 func GetActivated(pid string) []string {
-	return readTemporal("activated", pid)
+	return storage.ReadTemporal("activated", pid)
 }
 
 func isActivated(activated []string, name string) bool {
@@ -145,7 +147,7 @@ func (env *Env) Activate(pid string) {
 		//TODO activate child envs
 	}
 	//Add to list
-	writeTemporal("activated", pid, append(activated, env.name))
+	storage.WriteTemporal("activated", pid, append(activated, env.name))
 }
 
 func (env *Env) Deactivate(pid string) {
@@ -157,14 +159,14 @@ func (env *Env) Deactivate(pid string) {
 			break
 		}
 	}
-	writeTemporal("activated", pid, activated)
+	storage.WriteTemporal("activated", pid, activated)
 
 	if !isActivated(activated, env.name) {
 		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO deactivate child envs
 	}
 	if len(activated) == 0 {
-		util.RemoveDir(getTemporalDir(pid))
+		util.RemoveDir(storage.GetTemporalDir(pid))
 	}
 }
 
