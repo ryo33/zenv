@@ -11,7 +11,7 @@ const (
 	VBIN = "vbin" // Dir
 )
 
-var link = Setting{
+var link = setting{
 	read:       readLink,
 	write:      writeLink,
 	activate:   activateLink,

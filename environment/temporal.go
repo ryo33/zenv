@@ -16,7 +16,11 @@ func Now() string {
 	return time.Now().Format(time.ANSIC)
 }
 
-func getTemporalPath(key, subkey string) string {
+func getTemporalPath() string {
+	return path.Join(util.GetHomeDir(), ZENV, TMP)
+}
+
+func getTemporalFilePath(key, subkey string) string {
 	return path.Join(util.GetHomeDir(), ZENV, TMP, subkey, key)
 }
 
@@ -26,17 +30,17 @@ func getTemporalDir(subkey string) string {
 
 func updateModified(pid string) {
 	if util.Exists(getTemporalDir(pid)) {
-		util.WriteFile(getTemporalPath(MODIFIED, pid), []string{Now()})
+		util.WriteFile(getTemporalFilePath(MODIFIED, pid), []string{Now()})
 	}
 }
 
 func readTemporal(key, subkey string) []string {
-	fi := util.ReadFile(getTemporalPath(key, subkey))
+	fi := util.ReadFile(getTemporalFilePath(key, subkey))
 	tmp := util.Remove(fi, "")
 	return tmp
 }
 
 func writeTemporal(key, subkey string, data []string) {
 	util.PrepareDir(getTemporalDir(subkey))
-	util.WriteFile(getTemporalPath(key, subkey), data)
+	util.WriteFile(getTemporalFilePath(key, subkey), data)
 }

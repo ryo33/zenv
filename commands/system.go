@@ -12,6 +12,10 @@ var system = cli.Command{
 	`,
 	Flags: []cli.Flag{
 		cli.BoolFlag{
+			Name:  "clean",
+			Usage: "",
+		},
+		cli.BoolFlag{
 			Name:  "cd-before",
 			Usage: "",
 		},
@@ -47,6 +51,12 @@ func doSystem(c *cli.Context) {
 			environment.Activate(args[0], args[2])
 		} else {
 			printArgumentError(3)
+		}
+	} else if c.Bool("clean") {
+		if len(args) == 1 {
+			environment.Clean(args[0])
+		} else {
+			printArgumentError(1)
 		}
 	}
 }
