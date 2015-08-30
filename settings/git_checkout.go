@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-var gitCheckout = Setting{
+var gitCheckout = setting{
 	read:       readGitCheckout,
 	write:      writeGitCheckout,
 	activate:   activateGitCheckout,

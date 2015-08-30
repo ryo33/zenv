@@ -19,6 +19,7 @@ type Env struct {
 
 const (
 	SEPARATOR = "="
+	ACTIVATED = "activated"
 )
 
 func GetGlobalEnv(name string) *Env {
@@ -29,6 +30,7 @@ func GetGlobalEnv(name string) *Env {
 	return env
 }
 
+// it is almost same as getLocalEnv but never return nil
 func GetLocalEnv(name string) *Env {
 	env := getLocalEnv(name)
 	if env == nil {
@@ -93,6 +95,24 @@ func GetCurrentEnv() *Env {
 	return read(getLocalPath(util.GetCurrentPath()))
 }
 
+func Clean(current string) {
+	settings.Initialize(getZenvPath())
+	tmpPath := storage.GetTemporalPath()
+	for _, dir := range util.GetAllDir(tmpPath) {
+		if current != dir {
+			activated := util.ReadFile(path.Join(tmpPath, dir, ACTIVATED))
+			for _, act := range activated {
+				env := getLocalEnv(act)
+				if env != nil {
+					env.ReadSettings()
+					env.items.Clean(settings.NewInfo(getZenvPath(), env.dir))
+				}
+			}
+			util.RemoveDir(path.Join(tmpPath, dir))
+		}
+	}
+}
+
 func Activate(pid string, dir string) {
 	util.PrepareDir(getZenvPath())
 	envs := getEnvs(dir)
@@ -128,7 +148,7 @@ func getZenvPath() string {
 }
 
 func GetActivated(pid string) []string {
-	return storage.ReadTemporal("activated", pid)
+	return storage.ReadTemporal(ACTIVATED, pid)
 }
 
 func isActivated(activated []string, name string) bool {
@@ -141,13 +161,14 @@ func isActivated(activated []string, name string) bool {
 }
 
 func (env *Env) Activate(pid string) {
+	storage.ClearTemporal()
 	activated := GetActivated(pid)
 	if !isActivated(activated, env.name) {
 		env.items.Activate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO activate child envs
 	}
 	//Add to list
-	storage.WriteTemporal("activated", pid, append(activated, env.name))
+	storage.WriteTemporal(ACTIVATED, pid, append(activated, env.name))
 }
 
 func (env *Env) Deactivate(pid string) {
@@ -159,7 +180,7 @@ func (env *Env) Deactivate(pid string) {
 			break
 		}
 	}
-	storage.WriteTemporal("activated", pid, activated)
+	storage.WriteTemporal(ACTIVATED, pid, activated)
 
 	if !isActivated(activated, env.name) {
 		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))

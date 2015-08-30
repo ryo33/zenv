@@ -6,13 +6,14 @@ import (
 	"strings"
 )
 
-type Setting struct {
-	read       func(string) []string
-	write      func([]string) string
-	activate   func([]string, *Info) bool
-	deactivate func([]string, *Info) bool
-	initialize func(string)
-	equal      func([]string, []string) bool
+type setting struct {
+	read           func(string) []string
+	write          func([]string) string
+	activate       func([]string, *Info) bool
+	deactivate     func([]string, *Info) bool
+	initialize     func(string)
+	equal          func([]string, []string) bool
+	mustDeactivate bool
 }
 
 type Info struct {
@@ -22,7 +23,7 @@ type Info struct {
 
 type Items map[string][][]string
 
-var settings = map[string]Setting{
+var settings = map[string]setting{
 	"link": link,
 }
 
@@ -126,11 +127,24 @@ func (items Items) Activate(info *Info) {
 		} else {
 			for _, it := range its {
 				if !se.activate(it, info) {
-					util.PrintErrorMessageContinue("aaaa") // TODO can't activate
+					util.PrintErrorMessageContinue("can't activate")
 				}
 			}
 		}
 	}
+}
+
+func (items Items) Clean(info *Info) {
+	newItems := make(map[string][][]string)
+	for key, its := range items.ToMap() {
+		se, ok := settings[key]
+		if !ok {
+			util.PrintErrorMessageContinue(key + " lable is undefined")
+		} else if se.mustDeactivate {
+			newItems[key] = its
+		}
+	}
+	Items(newItems).Deactivate(info)
 }
 
 func (items Items) Deactivate(info *Info) {
@@ -141,7 +155,7 @@ func (items Items) Deactivate(info *Info) {
 		} else {
 			for _, it := range its {
 				if !se.deactivate(it, info) {
-					util.PrintErrorMessageContinue("aaaa") // TODO can't deactivate
+					util.PrintErrorMessageContinue("can't deactivate")
 				}
 			}
 		}

@@ -26,3 +26,15 @@ func WriteFile(name string, data []string) {
 func RemoveDir(name string) {
 	PrintErrors(os.RemoveAll(name))
 }
+
+func GetAllDir(dir string) []string {
+	entries, err := ioutil.ReadDir(dir)
+	PrintErrors(err)
+	result := []string{}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			result = append(result, entry.Name())
+		}
+	}
+	return result
+}
