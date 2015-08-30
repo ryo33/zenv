@@ -24,8 +24,7 @@ type Info struct {
 type Items map[string][][]string
 
 var settings = map[string]setting{
-	"link":        link,
-	"gitCheckout": gitCheckout,
+	"link": link,
 }
 
 const (
