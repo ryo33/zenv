@@ -2,7 +2,9 @@ package environment
 
 import (
 	"github.com/ryo33/zenv/settings"
+	"github.com/ryo33/zenv/storage"
 	"github.com/ryo33/zenv/util"
+	"github.com/ryo33/zenv/zenv"
 	"path"
 )
 
@@ -49,7 +51,7 @@ func getLocalEnv(dir string) *Env {
 }
 
 func read(name string) *Env {
-	util.PrepareDir(path.Join(util.GetHomeDir(), ZENV, ENVS))
+	util.PrepareDir(path.Join(util.GetHomeDir(), zenv.ZENV, ENVS))
 	env := readInfo(name)
 	return env
 }
@@ -95,7 +97,7 @@ func GetCurrentEnv() *Env {
 
 func Clean(current string) {
 	settings.Initialize(getZenvPath())
-	tmpPath := getTemporalPath()
+	tmpPath := storage.GetStoragePath(storage.TMP)
 	for _, dir := range util.GetAllDir(tmpPath) {
 		if current != dir {
 			activated := util.ReadFile(path.Join(tmpPath, dir, ACTIVATED))
@@ -134,7 +136,7 @@ func (env *Env) GetPath(sub string) string {
 }
 
 func getGlobalPath(name string) string {
-	return path.Join(util.GetHomeDir(), ZENV, ENVS, name)
+	return path.Join(util.GetHomeDir(), zenv.ZENV, ENVS, name)
 }
 
 func getLocalPath(name string) string {
@@ -142,11 +144,11 @@ func getLocalPath(name string) string {
 }
 
 func getZenvPath() string {
-	return path.Join(util.GetHomeDir(), ZENV)
+	return path.Join(util.GetHomeDir(), zenv.ZENV)
 }
 
 func GetActivated(pid string) []string {
-	return readTemporal(ACTIVATED, pid)
+	return storage.ReadTemporal(pid, ACTIVATED)
 }
 
 func isActivated(activated []string, name string) bool {
@@ -159,14 +161,14 @@ func isActivated(activated []string, name string) bool {
 }
 
 func (env *Env) Activate(pid string) {
-	clearTemporal()
+	storage.ClearTemporal()
 	activated := GetActivated(pid)
 	if !isActivated(activated, env.name) {
 		env.items.Activate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO activate child envs
 	}
 	//Add to list
-	writeTemporal(ACTIVATED, pid, append(activated, env.name))
+	storage.WriteTemporal(pid, ACTIVATED, append(activated, env.name))
 }
 
 func (env *Env) Deactivate(pid string) {
@@ -178,14 +180,14 @@ func (env *Env) Deactivate(pid string) {
 			break
 		}
 	}
-	writeTemporal(ACTIVATED, pid, activated)
+	storage.WriteTemporal(pid, ACTIVATED, activated)
 
 	if !isActivated(activated, env.name) {
 		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO deactivate child envs
 	}
 	if len(activated) == 0 {
-		util.RemoveDir(getTemporalDir(pid))
+		util.RemoveDir(storage.GetStorageDir(storage.TMP, pid))
 	}
 }
 

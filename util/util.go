@@ -5,6 +5,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 )
 
@@ -65,8 +66,9 @@ func PrepareDir(dir string) {
 	}
 }
 
-func ExecCommand(command ...string) {
-	exec.Command(command[0], command[1:]...).Run()
+func ExecCommand(command ...string) (string, error) {
+	output, err := exec.Command(command[0], command[1:]...).Output()
+	return string(output), err
 }
 
 func GetCurrentPath() string {
@@ -84,4 +86,10 @@ func GetHomeDir() string {
 func Setenv(key, value string) {
 	os.Setenv(key, value)
 	Print(fmt.Sprintf("export %s=%s", key, value))
+}
+
+func ExpandPath(pa string) string {
+	dir, err := homedir.Expand(pa)
+	PrintErrors(err)
+	return path.Clean(dir)
 }
