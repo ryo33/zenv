@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -89,7 +90,12 @@ func Setenv(key, value string) {
 }
 
 func ExpandPath(pa string) string {
-	dir, err := homedir.Expand(pa)
-	PrintErrors(err)
-	return path.Clean(dir)
+	var err error
+	if strings.HasPrefix(pa, "./") {
+		pa = path.Join(GetCurrentPath(), strings.TrimPrefix(pa, "./"))
+	} else if strings.HasPrefix(pa, "~/") {
+		pa, err = homedir.Expand(pa)
+		PrintErrors(err)
+	}
+	return path.Clean(pa)
 }

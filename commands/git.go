@@ -58,19 +58,19 @@ func doGit(c *cli.Context) {
 		util.PrintErrorMessage(sub + " is undefined")
 	}
 	// list settings
-	if argc == 0 {
+	if c.Bool("remove") {
+		switch sub {
+		default:
+			env.RemoveItems(preGit+sub, removeGit0, [][]string{[]string{dir}})
+		}
+		env.Write()
+	} else if argc == 0 {
 		switch sub {
 		default:
 			for _, i := range env.GetItems(preGit + sub) {
 				util.Print(strings.Join(i, " "))
 			}
 		}
-	} else if c.Bool("remove") {
-		switch sub {
-		default:
-			env.RemoveItems(preGit+sub, removeGit1, util.Wrap(args))
-		}
-		env.Write()
 	} else {
 		switch sub {
 		// 2 value
@@ -93,7 +93,7 @@ func doGit(c *cli.Context) {
 // match 0 value
 func removeGit0(it []string, param []string) bool {
 	// [0] is dir
-	if it[0] == param[0] {
+	if len(it) >= 1 && it[0] == param[0] {
 		return true
 	}
 	return false
@@ -102,7 +102,7 @@ func removeGit0(it []string, param []string) bool {
 // match 1 value
 func removeGit1(it []string, param []string) bool {
 	// [0] is dir
-	if it[0] == param[0] && it[1] == param[1] {
+	if len(it) >= 2 && it[0] == param[0] && it[1] == param[1] {
 		return true
 	}
 	return false
