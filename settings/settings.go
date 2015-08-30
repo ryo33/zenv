@@ -24,11 +24,13 @@ type Info struct {
 type Items map[string][][]string
 
 var settings = map[string]setting{
-	"link": link,
+	"link":       link,
+	GIT_CHECKOUT: gitCheckout,
 }
 
 const (
-	RC = "rc" // File
+	RC       = "rc" // File
+	SETTINGS = "settings"
 )
 
 func NewInfo(zenv, envdir string) *Info {
