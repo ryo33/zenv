@@ -159,6 +159,7 @@ func isActivated(activated []string, name string) bool {
 }
 
 func (env *Env) Activate(pid string) {
+	clearTemporal()
 	activated := GetActivated(pid)
 	if !isActivated(activated, env.name) {
 		env.items.Activate(settings.NewInfo(getZenvPath(), env.dir))
