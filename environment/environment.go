@@ -97,7 +97,7 @@ func GetCurrentEnv() *Env {
 
 func Clean(current string) {
 	settings.Initialize(getZenvPath())
-	tmpPath := storage.GetTemporalPath()
+	tmpPath := storage.GetStoragePath(storage.TMP)
 	for _, dir := range util.GetAllDir(tmpPath) {
 		if current != dir {
 			activated := util.ReadFile(path.Join(tmpPath, dir, ACTIVATED))
@@ -148,7 +148,7 @@ func getZenvPath() string {
 }
 
 func GetActivated(pid string) []string {
-	return storage.ReadTemporal(ACTIVATED, pid)
+	return storage.ReadTemporal(pid, ACTIVATED)
 }
 
 func isActivated(activated []string, name string) bool {
@@ -168,7 +168,7 @@ func (env *Env) Activate(pid string) {
 		//TODO activate child envs
 	}
 	//Add to list
-	storage.WriteTemporal(ACTIVATED, pid, append(activated, env.name))
+	storage.WriteTemporal(pid, ACTIVATED, append(activated, env.name))
 }
 
 func (env *Env) Deactivate(pid string) {
@@ -180,14 +180,14 @@ func (env *Env) Deactivate(pid string) {
 			break
 		}
 	}
-	storage.WriteTemporal(ACTIVATED, pid, activated)
+	storage.WriteTemporal(pid, ACTIVATED, activated)
 
 	if !isActivated(activated, env.name) {
 		env.items.Deactivate(settings.NewInfo(getZenvPath(), env.dir))
 		//TODO deactivate child envs
 	}
 	if len(activated) == 0 {
-		util.RemoveDir(storage.GetTemporalDir(pid))
+		util.RemoveDir(storage.GetStorageDir(storage.TMP, pid))
 	}
 }
 
