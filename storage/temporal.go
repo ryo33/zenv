@@ -17,7 +17,7 @@ func Now() string {
 
 func updateLast(key string) {
 	if util.Exists(GetStorageDir(TMP, key)) {
-		util.WriteFile(getStorageFilePath(TMP, LAST, key), []string{Now()})
+		util.WriteFile(getStorageFilePath(TMP, key, LAST), []string{Now()})
 	}
 }
 
