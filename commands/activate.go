@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ryo33/zenv/environment"
+	"github.com/ryo33/zenv/util"
 )
 
 var activate = cli.Command{
@@ -18,6 +19,6 @@ func doActivate(c *cli.Context) {
 	if len(args) == 2 {
 		environment.GetGlobalEnv(args[1]).Activate(args[0])
 	} else {
-		printArgumentError(2)
+		util.PrintArgumentError(2)
 	}
 }

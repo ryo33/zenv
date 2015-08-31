@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/codegangsta/cli"
 	"github.com/ryo33/zenv/environment"
+	"github.com/ryo33/zenv/util"
 )
 
 var system = cli.Command{
@@ -37,26 +38,26 @@ func doSystem(c *cli.Context) {
 		if len(args) == 2 {
 			environment.Deactivate(args[0], args[1])
 		} else {
-			printArgumentError(2)
+			util.PrintArgumentError(2)
 		}
 	} else if c.Bool("cd-after") {
 		if len(args) == 2 {
 			environment.Activate(args[0], args[1])
 		} else {
-			printArgumentError(2)
+			util.PrintArgumentError(2)
 		}
 	} else if c.Bool("cd") {
 		if len(args) == 3 {
 			environment.Deactivate(args[0], args[1])
 			environment.Activate(args[0], args[2])
 		} else {
-			printArgumentError(3)
+			util.PrintArgumentError(3)
 		}
 	} else if c.Bool("clean") {
 		if len(args) == 1 {
 			environment.Clean(args[0])
 		} else {
-			printArgumentError(1)
+			util.PrintArgumentError(1)
 		}
 	}
 }

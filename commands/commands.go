@@ -12,7 +12,7 @@ var Commands = []cli.Command{
 	deactivate,
 	system,
 	link,
-	git,
+	git_,
 }
 
 var Env *environment.Env

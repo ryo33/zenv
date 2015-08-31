@@ -1,8 +1,6 @@
 Given "the git repository" do
     run_simple("git init")
-    run_simple("echo a > tmp")
-    run_simple("git add .")
-    run_simple("git commit -m \"Add tmp\"")
+    run_simple("git commit --allow-empty -m \"Add tmp\"")
 end
 
 Given "the git branch \"$branch\"" do |branch|
