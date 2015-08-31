@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/ryo33/zenv/storage"
 	"github.com/ryo33/zenv/util"
-	"os"
 	"strings"
 )
 
@@ -44,9 +43,7 @@ func activateGitCheckout(args []string, info *Info) bool {
 	if len(args) != 2 {
 		return false
 	}
-	defer os.Chdir(util.GetCurrentPath())
-	os.Chdir(args[0])
-	branch, err := util.ExecCommand("git", "rev-parse", "--abbrev-ref", "HEAD")
+	branch, err := util.ExecCommand("git", getGitDir(args[0]), "rev-parse", "--abbrev-ref", "HEAD")
 	if err != nil || len(branch) == 0 {
 		util.PrintErrorMessageContinue("can't find branch message in " + args[0])
 		return false
@@ -54,7 +51,7 @@ func activateGitCheckout(args []string, info *Info) bool {
 	dir := escapeDir(args[0])
 	branches := storage.ReadStorage(SETTINGS, GIT_CHECKOUT, dir)
 	storage.WriteStorage(SETTINGS, GIT_CHECKOUT, dir, append(branches, info.envdir+"="+branch))
-	_, err = util.ExecCommand("git", "checkout", args[1])
+	_, err = util.ExecCommand("git", getGitDir(args[0]), "checkout", args[1])
 	if err != nil {
 		util.PrintErrorMessageContinue(fmt.Sprintf("can't checkout to %s in %s", args[1], args[0]))
 		return false
@@ -71,9 +68,7 @@ func deactivateGitCheckout(args []string, info *Info) bool {
 	prefix := info.envdir + "="
 	for i, line := range branches {
 		if strings.HasPrefix(line, prefix) {
-			defer os.Chdir(util.GetCurrentPath())
-			os.Chdir(args[0])
-			util.ExecCommand("git", "checkout", strings.TrimPrefix(line, prefix))
+			util.ExecCommand("git", getGitDir(args[0]), "checkout", strings.TrimPrefix(line, prefix))
 			storage.WriteStorage(SETTINGS, GIT_CHECKOUT, dir, append(branches[:i], branches[i+1:]...))
 			break
 		}
