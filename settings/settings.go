@@ -26,6 +26,7 @@ type Items map[string][][]string
 var settings = map[string]setting{
 	"link":       link,
 	GIT_CHECKOUT: gitCheckout,
+	GIT_CONFIG:   gitConfig,
 }
 
 const (
