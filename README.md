@@ -7,11 +7,11 @@ Powerful environments
 
 ##Features
 You Can ...
-* Activate or Deactivate Automatically
-* Make Global or Local Environment
-* Make Recursive Environment
-* [WIP] Merge or Combine Environments Made By `zenv`
-* [WIP] Run Commands When Activating or Deactivating
+* activate or deactivate automatically
+* make global or local environment
+* make recursive environment
+* [WIP] merge or combine environments
+* [WIP] run commands when activating or deactivating
 
 ##Demo
 Changing the version of python `2.7.10` to `3.4.3` in `~/tmp/example` directory.
@@ -77,7 +77,7 @@ Option of NAME:
 `--global` or `-g`: global environment **DEFAULT**  
 `--local` or `-l`: local environment  
 ###[WIP]load
-Activate of Deactivate environments at the same time  
+Activate or deactivate environments at the same time  
 `$ zenv load NAME...`  
 Options:  
 Same as `merge`'s  
